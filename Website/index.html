@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en" data-mode="work">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jad, off the record</title>
+<meta name="description" content="A solo exhibition. IT by daylight — networks, Microsoft 365, systems. Guitar, iron, pages and big questions after hours. Same person, different light.">
+<meta property="og:title" content="Jad — Not Just IT">
+<meta property="og:description" content="A solo exhibition. IT by daylight. Everything else after hours. Flip the lights.">
+<meta property="og:type" content="website">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="%2314100C"/><text x="32" y="45" font-family="Georgia" font-size="38" font-weight="bold" fill="%23F0A32B" text-anchor="middle">J*</text></svg>'>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=IBM+Plex+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   JAD — SOLO EXHIBITION
+   Two lighting states: work lights (day) / show lights (night)
+   ============================================================ */
+:root{
+  /* WORK LIGHTS — cool gallery daylight */
+  --bg:#F1F2EE;
+  --bg-2:#E8EAE4;
+  --ink:#17191B;
+  --muted:#63685F;
+  --line:#C9CCC2;
+  --accent:#2742D0;
+  --accent-soft:rgba(39,66,208,.10);
+  --card:#F7F8F5;
+  --shadow:0 18px 40px -24px rgba(23,25,27,.25);
+  --grain-op:0;
+}
+html[data-mode="show"]{
+  /* SHOW LIGHTS — tungsten amber on warm black */
+  --bg:#14100C;
+  --bg-2:#1B1610;
+  --ink:#F3EBDD;
+  --muted:#A2957F;
+  --line:#382F24;
+  --accent:#F0A32B;
+  --accent-soft:rgba(240,163,43,.10);
+  --card:#191410;
+  --shadow:0 22px 50px -26px rgba(0,0,0,.8);
+  --grain-op:.055;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+html.theming, html.theming *, html.theming *::before, html.theming *::after{
+  transition:background-color .55s ease, color .55s ease, border-color .55s ease, box-shadow .55s ease, opacity .55s ease;
+}
+body{
+  background:var(--bg);
+  color:var(--ink);
+  font-family:"Instrument Sans",system-ui,-apple-system,sans-serif;
+  font-size:17px;
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+/* tungsten grain, show mode only */
+body::after{
+  content:"";position:fixed;inset:0;z-index:3;pointer-events:none;
+  opacity:var(--grain-op);
+  background-image:url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/></filter><rect width="160" height="160" filter="url(%23n)" opacity="0.6"/></svg>');
+}
+::selection{background:var(--accent);color:var(--bg)}
+h1,h2,h3{font-family:"Bricolage Grotesque","Instrument Sans",sans-serif;line-height:1.02}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+.wrap{max-width:1120px;margin:0 auto;padding-inline:clamp(20px,5vw,48px)}
+
+/* ---------- mode-dependent copy ---------- */
+.mw{display:inline}
+.ms{display:none}
+html[data-mode="show"] .mw{display:none}
+html[data-mode="show"] .ms{display:inline}
+
+/* ---------- preloader: lighting cue sheet ---------- */
+.loader{
+  position:fixed;inset:0;z-index:100;background:#14100C;color:#F3EBDD;
+  display:flex;align-items:center;justify-content:center;
+  animation:loaderLift .6s cubic-bezier(.7,0,.2,1) 1.55s forwards;
+}
+.loader-inner{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.12em;text-transform:uppercase;display:grid;gap:10px}
+.loader-inner span{opacity:0;animation:cueIn .4s ease forwards}
+.loader-inner span:nth-child(1){animation-delay:.05s}
+.loader-inner span:nth-child(2){animation-delay:.45s;color:#F0A32B}
+.loader-inner span:nth-child(3){animation-delay:.85s}
+.loader-inner b{font-weight:500;color:#F0A32B}
+@keyframes cueIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes loaderLift{to{transform:translateY(-100%);visibility:hidden}}
+
+/* ---------- lighting-change flash overlay ---------- */
+.flash{position:fixed;inset:0;z-index:98;pointer-events:none;opacity:0}
+.flash.fx-work{background:#FDFEFB;animation:tubeFlicker .5s linear}
+.flash.fx-show{background:#F0A32B;animation:warmGlow .6s ease}
+@keyframes tubeFlicker{
+  0%{opacity:0}8%{opacity:.85}16%{opacity:0}30%{opacity:.5}
+  40%{opacity:0}55%{opacity:.9}70%{opacity:.1}100%{opacity:0}
+}
+@keyframes warmGlow{0%{opacity:0}30%{opacity:.28}100%{opacity:0}}
+
+/* ---------- nav ---------- */
+.nav{
+  position:sticky;top:0;z-index:50;
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav-in{display:flex;align-items:center;justify-content:space-between;gap:16px;padding-block:14px}
+.brand{font-family:"Bricolage Grotesque",sans-serif;font-weight:800;font-size:20px;letter-spacing:.02em;text-decoration:none}
+.brand .ast{color:var(--accent)}
+.nav-right{display:flex;align-items:center;gap:18px}
+.clock{font-size:11px;letter-spacing:.1em;color:var(--muted);white-space:nowrap}
+@media(max-width:600px){.clock{display:none}}
+
+/* the switch */
+.switch{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg-2);border:1px solid var(--line);border-radius:999px;
+  padding:8px 14px;cursor:pointer;font-family:"IBM Plex Mono",monospace;
+  font-size:10px;letter-spacing:.14em;color:var(--muted);
+}
+.switch:hover{border-color:var(--accent)}
+.sw-opt{transition:color .3s ease;white-space:nowrap}
+.sw-opt .short{display:none}
+@media(max-width:680px){.sw-opt .long{display:none}.sw-opt .short{display:inline}}
+html[data-mode="work"] .sw-work{color:var(--accent);font-weight:500}
+html[data-mode="show"] .sw-show{color:var(--accent);font-weight:500}
+.sw-track{position:relative;width:34px;height:16px;border-radius:999px;background:var(--line);flex:none}
+.sw-knob{
+  position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;
+  background:var(--accent);transition:transform .35s cubic-bezier(.6,0,.2,1.2);
+}
+html[data-mode="show"] .sw-knob{transform:translateX(18px)}
+.switch.nudge .sw-track{animation:nudge .5s ease 2}
+@keyframes nudge{0%,100%{transform:translateX(0)}30%{transform:translateX(-3px)}60%{transform:translateX(3px)}}
+
+/* ---------- hero ---------- */
+.hero{padding-block:clamp(48px,9vh,96px) clamp(30px,5vh,56px)}
+.hero-grid{display:grid;grid-template-columns:1.4fr .9fr;gap:clamp(28px,5vw,72px);align-items:end}
+@media(max-width:860px){.hero-grid{grid-template-columns:1fr}}
+.eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.eyebrow::before{content:"";width:28px;height:1px;background:var(--accent)}
+.h1{
+  font-size:clamp(5.2rem,20vw,13rem);font-weight:800;letter-spacing:-.015em;
+  margin-block:10px 6px;display:flex;
+}
+.h1 .lw{overflow:hidden;display:inline-block}
+.h1 .lt{display:inline-block;transform:translateY(115%);animation:letterRise .9s cubic-bezier(.2,.8,.2,1) forwards}
+.h1 .lw:nth-child(1) .lt{animation-delay:1.55s}
+.h1 .lw:nth-child(2) .lt{animation-delay:1.65s}
+.h1 .lw:nth-child(3) .lt{animation-delay:1.75s}
+.h1 .dot{color:var(--accent)}
+@keyframes letterRise{to{transform:translateY(0)}}
+.hero-sub{font-size:clamp(1.05rem,2.1vw,1.35rem);max-width:34ch;color:var(--ink);font-weight:500}
+.hero-foot{margin-top:22px;display:grid;gap:6px}
+.kicker{color:var(--muted);font-size:15px}
+.footnote{font-size:11px;letter-spacing:.16em;color:var(--accent)}
+.hero-late{opacity:0;animation:fadeUp .8s ease 1.95s forwards}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* portrait plinth */
+.portrait{opacity:0;animation:fadeUp .9s ease 2.05s forwards}
+.frame{
+  border:1px solid var(--line);background:var(--card);box-shadow:var(--shadow);
+  padding:12px;position:relative;
+}
+.frame::before,.frame::after{
+  content:"";position:absolute;width:14px;height:14px;border:1px solid var(--accent);
+}
+.frame::before{top:-1px;left:-1px;border-right:none;border-bottom:none}
+.frame::after{bottom:-1px;right:-1px;border-left:none;border-top:none}
+.art{
+  aspect-ratio:4/5;background:
+    linear-gradient(160deg,var(--accent-soft),transparent 55%),
+    repeating-linear-gradient(0deg,transparent 0 3px,var(--accent-soft) 3px 4px),
+    var(--bg-2);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  overflow:hidden;position:relative;
+}
+/* To use a real photo: delete the two spans below and drop in
+   <img src="me.jpg" alt="Jad" style="width:100%;height:100%;object-fit:cover"> */
+.art .big-j{
+  font-family:"Bricolage Grotesque",sans-serif;font-weight:800;
+  font-size:clamp(7rem,14vw,11rem);line-height:1;color:var(--accent);opacity:.9;
+}
+.art .pending{font-size:9px;letter-spacing:.2em;color:var(--muted);text-transform:uppercase}
+.placard{margin-top:12px;font-size:10.5px;letter-spacing:.12em;line-height:1.7;color:var(--muted);text-transform:uppercase}
+.placard b{color:var(--ink);font-weight:500}
+
+/* ---------- marquee ---------- */
+.marquee{
+  border-block:1px solid var(--line);padding-block:14px;overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);
+}
+.mq-track{display:flex;gap:34px;width:max-content;animation:mq 36s linear infinite}
+.marquee:hover .mq-track{animation-play-state:paused}
+@keyframes mq{to{transform:translateX(-50%)}}
+.mi{font-size:11px;letter-spacing:.18em;white-space:nowrap;display:flex;align-items:center;gap:34px;color:var(--muted);transition:color .5s ease}
+.mi::after{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent);opacity:.6}
+html[data-mode="work"] .mi.w{color:var(--ink)}
+html[data-mode="show"] .mi.s{color:var(--ink)}
+
+/* ---------- halls ---------- */
+.hall{padding-block:clamp(64px,11vh,120px)}
+.hall-head{margin-bottom:clamp(28px,5vh,48px)}
+.hall-tag{font-size:11px;letter-spacing:.22em;color:var(--accent);text-transform:uppercase;display:flex;align-items:center;gap:14px}
+.hall-tag::after{content:"";flex:1;height:1px;background:var(--line)}
+.hall-title{font-size:clamp(2.3rem,5.5vw,4rem);font-weight:800;letter-spacing:-.01em;margin-top:14px}
+.hall-lede{margin-top:14px;max-width:56ch;color:var(--muted);font-size:1.05rem}
+.hall-lede b{color:var(--ink);font-weight:500}
+
+/* exhibit cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));gap:16px}
+.card{
+  background:var(--card);border:1px solid var(--line);padding:26px 24px 22px;
+  position:relative;display:flex;flex-direction:column;gap:12px;
+  transition:transform .35s ease,border-color .35s ease,box-shadow .35s ease;
+}
+.card::before{content:"";position:absolute;top:-1px;left:-1px;width:12px;height:12px;border-top:1px solid var(--accent);border-left:1px solid var(--accent);opacity:0;transition:opacity .3s ease}
+.card:hover{transform:translateY(-5px);border-color:var(--accent);box-shadow:var(--shadow)}
+.card:hover::before{opacity:1}
+.tag{font-size:9.5px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase}
+.card h3{font-size:1.45rem;font-weight:700}
+.card p{color:var(--muted);font-size:.95rem;flex:1}
+.card p b{color:var(--ink);font-weight:500}
+.spec{font-size:9.5px;letter-spacing:.14em;color:var(--muted);text-transform:uppercase;border-top:1px solid var(--line);padding-top:12px}
+
+/* ---------- cue sheet ---------- */
+.cues{list-style:none;border-top:1px solid var(--line)}
+.cue-row{
+  display:grid;grid-template-columns:120px 1fr 110px;gap:20px;align-items:baseline;
+  padding-block:26px;border-bottom:1px solid var(--line);transition:background .3s ease,padding .3s ease;
+}
+.cue-row:hover{background:var(--accent-soft);padding-inline:14px}
+.cue-id{font-size:11px;letter-spacing:.2em;color:var(--accent)}
+.cue-row h3{font-size:1.35rem;font-weight:700;margin-bottom:6px}
+.cue-row p{color:var(--muted);font-size:.95rem;max-width:58ch}
+.cue-st{font-size:9.5px;letter-spacing:.18em;color:var(--muted);text-align:right;text-transform:uppercase}
+@media(max-width:640px){.cue-row{grid-template-columns:1fr;gap:8px}.cue-st{text-align:left}}
+.closer{margin-top:34px;font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:clamp(1.3rem,3vw,1.8rem);max-width:26ch}
+.closer em{font-style:normal;color:var(--accent)}
+
+/* ---------- guestbook ---------- */
+.guest{padding-block:clamp(70px,13vh,140px);text-align:left}
+.guest .hall-title{font-size:clamp(2.6rem,7vw,5rem)}
+.cta-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+.btn{
+  display:inline-flex;align-items:center;gap:10px;text-decoration:none;
+  font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.16em;
+  padding:16px 26px;border:1px solid var(--ink);position:relative;overflow:hidden;
+  transition:color .35s ease,border-color .35s ease;
+}
+.btn::before{content:"";position:absolute;inset:0;background:var(--accent);transform:translateY(101%);transition:transform .35s cubic-bezier(.6,0,.2,1);z-index:0}
+.btn:hover::before{transform:translateY(0)}
+.btn:hover{color:var(--bg);border-color:var(--accent)}
+.btn span{position:relative;z-index:1}
+.btn.solid{background:var(--ink);color:var(--bg)}
+.btn.solid:hover{color:var(--bg)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line);padding-block:22px}
+.foot-in{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:10px;letter-spacing:.16em;color:var(--muted);text-transform:uppercase}
+
+/* ---------- scroll reveal ---------- */
+.rv{opacity:0;transform:translateY(26px)}
+.rv.in{opacity:1;transform:none;transition:opacity .8s ease var(--d,0s),transform .8s cubic-bezier(.2,.7,.2,1) var(--d,0s)}
+
+/* ---------- reduced motion ---------- */
+@media(prefers-reduced-motion:reduce){
+  .loader{display:none}
+  .h1 .lt{transform:none;animation:none}
+  .hero-late,.portrait{opacity:1;animation:none}
+  .mq-track{animation:none}
+  .rv{opacity:1;transform:none}
+  .flash{display:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- lighting cue preloader -->
+<div class="loader" aria-hidden="true">
+  <div class="loader-inner">
+    <span>Case study: <b>“Jad”</b></span>
+    <span>LX cue 01 : work lights</span>
+    <span>— doors open —</span>
+  </div>
+</div>
+
+<!-- lighting-change flash -->
+<div class="flash" id="flash" aria-hidden="true"></div>
+
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top">JAD<span class="ast">*</span></a>
+    <div class="nav-right">
+      <span class="clock mono" id="clock">DUBAI · --:--</span>
+      <button class="switch" id="modeToggle" role="switch" aria-checked="false"
+              aria-label="Lighting — switch between work lights and show lights">
+        <span class="sw-opt sw-work"><span class="long">WORK LIGHTS</span><span class="short">WORK</span></span>
+        <span class="sw-track"><span class="sw-knob"></span></span>
+        <span class="sw-opt sw-show"><span class="long">SHOW LIGHTS</span><span class="short">SHOW</span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <p class="eyebrow mono hero-late">The Jad file · Dubai, AE</p>
+        <h1 class="h1" aria-label="Jad">
+          <span class="lw"><span class="lt">J</span></span><span class="lw"><span class="lt">A</span></span><span class="lw"><span class="lt">D<span class="dot">.</span></span></span>
+        </h1>
+        <p class="hero-sub hero-late">
+          <span class="mw">Final year computing student and IT intern. Networks, Microsoft 365, and the quiet work of keeping a company running.</span>
+          <span class="ms">Upcoming guitarist, so get an autograph while you still can. Reader of dead poets, and permanently curious about minds, mine included.</span>
+        </p>
+        <div class="hero-foot hero-late">
+          <p class="kicker">I don't fit on a résumé. Flip the lights.</p>
+          <p class="footnote mono">*ask about the rest.</p>
+        </div>
+      </div>
+
+      <figure class="portrait">
+        <div class="frame">
+          <div class="art">
+            <!-- To use a real photo, replace the two spans below with:
+                 <img src="me.jpg" alt="Jad" style="width:100%;height:100%;object-fit:cover"> -->
+            <img src="me.jpeg" alt="Jad" style="width:100%;height:100%;object-fit:cover">
+          </div>
+        </div>
+        <figcaption class="placard mono">
+          <b>Fig. 01 — “Portrait of a work in progress”</b><br>
+          Mixed media: coffee, questions, code
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- ============ MARQUEE ============ -->
+  <div class="marquee" aria-hidden="true">
+    <div class="mq-track mono">
+      <span class="mi w">Networking</span><span class="mi s">Stratocaster</span><span class="mi w">Microsoft 365</span><span class="mi s">Iron</span><span class="mi w">Security</span><span class="mi s">Rilke</span><span class="mi w">Business Central</span><span class="mi s">Jung</span><span class="mi w">Backups</span><span class="mi s">The Hard Problem</span><span class="mi w">Uptime</span><span class="mi s">GarageBand</span>
+      <span class="mi w">Networking</span><span class="mi s">Stratocaster</span><span class="mi w">Microsoft 365</span><span class="mi s">Iron</span><span class="mi w">Security</span><span class="mi s">Rilke</span><span class="mi w">Business Central</span><span class="mi s">Jung</span><span class="mi w">Backups</span><span class="mi s">The Hard Problem</span><span class="mi w">Uptime</span><span class="mi s">GarageBand</span>
+    </div>
+  </div>
+
+  <!-- ============ HALL 01 — THE DAY JOB ============ -->
+  <section class="hall">
+    <div class="wrap">
+      <div class="hall-head rv">
+        <p class="hall-tag mono">Hall 01 · The day job</p>
+        <h2 class="hall-title">Systems, kept honest.</h2>
+        <p class="hall-lede">By daylight I run IT at <b>Electra Solutions</b>, an events &amp; exhibitions company in Dubai, while finishing a computing degree at <b>RIT</b>. Real users, real deadlines, real consequences when the network sneezes.</p>
+      </div>
+      <div class="grid">
+        <article class="card rv" style="--d:.05s">
+          <span class="tag mono">Rack A1 · In production</span>
+          <h3>Keeping the lights on</h3>
+          <p>Day-to-day IT for a company that builds things on deadline, <b>networking, Microsoft 365, security</b>, backups, and being the person people find when something breaks. The work nobody notices until it stops.</p>
+          <span class="spec mono">Networks · Microsoft 365 · Security</span>
+        </article>
+        <article class="card rv" style="--d:.12s">
+          <span class="tag mono">Rack A2 · In training</span>
+          <h3>Learning how a business thinks</h3>
+          <p>Getting to know <b>Microsoft Business Central</b>, the ERP that runs the company, from the inside: how orders, invoices, and inventory become software. Less about the tool, more about how a business actually thinks.</p>
+          <span class="spec mono">ERP · Dynamics 365 Business Central</span>
+        </article>
+        <article class="card rv" style="--d:.19s">
+          <span class="tag mono">Rack A3 · Final year</span>
+          <h3>The degree</h3>
+          <p>B.S. in <b>Computing &amp; Information Technologies</b> at RIT Dubai, networking, system administration, and security. The final act is planned on RIT’s New York campus.</p>
+          <span class="spec mono">RIT · CIT · DXB → NY</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HALL 02 — AFTER HOURS ============ -->
+  <section class="hall" style="background:var(--bg-2)">
+    <div class="wrap">
+      <div class="hall-head rv">
+        <p class="hall-tag mono">Hall 02 · After hours</p>
+        <h2 class="hall-title">The job description ends at six.</h2>
+        <p class="hall-lede">These don’t. None of it is for a résumé, which is exactly why it belongs here.</p>
+      </div>
+      <div class="grid">
+        <article class="card rv" style="--d:.05s">
+          <span class="tag mono">Exhibit B1 · Strings</span>
+          <h3>Six strings, slowly</h3>
+          <p>A Squier Stratocaster, a Scarlett Solo, GarageBand, and a proper curriculum. Current mission: playing over backing tracks without flinching. It sounds bad less often every week, that’s the whole art.</p>
+          <span class="spec mono">Strat · Scarlett Solo · GarageBand</span>
+        </article>
+        <article class="card rv" style="--d:.12s">
+          <span class="tag mono">Exhibit B2 · Iron</span>
+          <h3>The long game vs. gravity</h3>
+          <p>The gym is a standing appointment. No heroics, just showing up, adding a little, and playing a very long game against gravity.</p>
+          <span class="spec mono">Status: stronger than last month</span>
+        </article>
+        <article class="card rv" style="--d:.19s">
+          <span class="tag mono">Exhibit B3 · Pages</span>
+          <h3>Twenty pages a day</h3>
+          <p>Twenty pages a day, mostly self-development, with poets on the side, Whitman, Gibran, Rilke, Hesse. Currently reading <b>The Mountain Is You</b>.</p>
+          <span class="spec mono">Now reading: The Mountain Is You</span>
+        </article>
+        <article class="card rv" style="--d:.26s">
+          <span class="tag mono">Exhibit B4 · Mind</span>
+          <h3>The big questions</h3>
+          <p>Philosophy and psychology, taken seriously, <b>consciousness, identity, why people do what they do</b>. Jung, the existentialists, the hard problem. The one ticket I never expect to close.</p>
+          <span class="spec mono">Open items: consciousness · the self</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HALL 03 — OPERATING NOTES ============ -->
+  <section class="hall">
+    <div class="wrap">
+      <div class="hall-head rv">
+        <p class="hall-tag mono">Hall 03 · Operating notes</p>
+        <h2 class="hall-title">Every show runs on a cue sheet.</h2>
+        <p class="hall-lede">So do I. Three cues, running daily.</p>
+      </div>
+      <ul class="cues">
+        <li class="cue-row rv">
+          <span class="cue-id mono">Cue 01</span>
+          <div>
+            <h3>Craft</h3>
+            <p>Thirty minutes of deliberate technical practice, every day. Small, boring, compounding.</p>
+          </div>
+          <span class="cue-st mono">Running</span>
+        </li>
+        <li class="cue-row rv" style="--d:.08s">
+          <span class="cue-id mono">Cue 02</span>
+          <div>
+            <h3>Leverage</h3>
+            <p>Build skills people already pay for, then build things that work while I sleep.</p>
+          </div>
+          <span class="cue-st mono">Running</span>
+        </li>
+        <li class="cue-row rv" style="--d:.16s">
+          <span class="cue-id mono">Cue 03</span>
+          <div>
+            <h3>Foundation</h3>
+            <p>The gym and twenty pages, most days. I maintain infrastructure at work, this is mine.</p>
+          </div>
+          <span class="cue-st mono">Running</span>
+        </li>
+      </ul>
+      <p class="closer rv">None of it is glamorous. <em>All of it compounds.</em></p>
+    </div>
+  </section>
+
+  <!-- ============ HALL 04 — GUESTBOOK ============ -->
+  <section class="hall guest" style="background:var(--bg-2)">
+    <div class="wrap">
+      <div class="hall-head rv">
+        <p class="hall-tag mono">Hall 04 · Guestbook</p>
+        <h2 class="hall-title">Sign the guestbook.</h2>
+        <p class="hall-lede">Open to good conversations, internships and IT roles, book arguments, or a genuinely hard question. The exhibition is free. So is a reply.</p>
+      </div>
+      <div class="cta-row rv" style="--d:.1s">
+        <!-- TODO: replace with your real email -->
+        <a class="btn solid" href="mailto:YOUR-EMAIL-HERE"><span>EMAIL ME →</span></a>
+        <!-- TODO: replace with your LinkedIn URL -->
+        <a class="btn" href="https://www.linkedin.com/in/YOUR-HANDLE" target="_blank" rel="noopener"><span>LINKEDIN ↗</span></a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap foot-in mono">
+    <span>© 2026 Jad · *not just IT</span>
+    <span>Built in Dubai · No gift shop</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var d=document, root=d.documentElement;
+
+  /* remove preloader from the flow after it lifts */
+  var loader=d.querySelector('.loader');
+  setTimeout(function(){ if(loader) loader.remove(); }, 2400);
+
+  /* Dubai clock */
+  var clock=d.getElementById('clock');
+  function tick(){
+    try{
+      var t=new Intl.DateTimeFormat('en-GB',{timeZone:'Asia/Dubai',hour:'2-digit',minute:'2-digit'}).format(new Date());
+      clock.textContent='DUBAI · '+t+' GST';
+    }catch(e){ clock.textContent='DUBAI · GST'; }
+  }
+  tick(); setInterval(tick,15000);
+
+  /* lighting toggle */
+  var toggle=d.getElementById('modeToggle'), flash=d.getElementById('flash');
+  var reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  toggle.addEventListener('click',function(){
+    var toShow = root.getAttribute('data-mode')==='work';
+    root.classList.add('theming');
+    root.setAttribute('data-mode', toShow?'show':'work');
+    toggle.setAttribute('aria-checked', toShow?'true':'false');
+    toggle.classList.remove('nudge');
+    if(!reduced){
+      flash.className='flash '+(toShow?'fx-show':'fx-work');
+      flash.addEventListener('animationend',function h(){ flash.className='flash'; flash.removeEventListener('animationend',h); });
+    }
+    setTimeout(function(){ root.classList.remove('theming'); },650);
+  });
+
+  /* one-time nudge so people notice the switch */
+  setTimeout(function(){ if(!reduced) toggle.classList.add('nudge'); },3400);
+
+  /* scroll reveals */
+  var els=[].slice.call(d.querySelectorAll('.rv'));
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    },{threshold:.15,rootMargin:'0px 0px -40px 0px'});
+    els.forEach(function(el){ io.observe(el); });
+  } else {
+    els.forEach(function(el){ el.classList.add('in'); });
+  }
+})();
+</script>
+
+</body>
+</html>
