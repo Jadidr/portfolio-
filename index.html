@@ -48,6 +48,9 @@ html{scroll-behavior:smooth}
 html.theming, html.theming *, html.theming *::before, html.theming *::after{
   transition:background-color .55s ease, color .55s ease, border-color .55s ease, box-shadow .55s ease, opacity .55s ease;
 }
+   @media (max-width:640px){
+  html.theming .h1, html.theming .h1 *{transition:none}
+}
 body{
   background:var(--bg);
   color:var(--ink);
